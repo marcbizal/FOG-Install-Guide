@@ -51,7 +51,7 @@ Shortly after the installation will complete, and you can now remove the USB dri
 ## Configuring Ubuntu
 
 ### Logging in
-Logging in is simple enough, however while writing this guide I ran into an issue where Ubuntu gave me odd unhelpful, but also not critical messages about the disk upon start-up. I had to open tty2 by pressing Ctrl-Alt-F2, at this point I could log in properly with the credentials I created in the installation step.
+Logging in is simple enough, however while writing this guide I ran into an issue where Ubuntu gave me odd unhelpful, but also not critical messages about the disk upon start-up. I had to open tty2 by pressing `Ctrl`-`Alt`-`F2`, at this point I could log in properly with the credentials I created in the installation step.
 
 ### Install Ubuntu Desktop
 The reason I chose not to install Ubuntu Desktop initially is because Ubuntu ships quite a few unneeded packages that bloat the installation. To avoid this, we can install it after the initial installation with some additional options.
@@ -64,7 +64,7 @@ This can take a while so maybe get some more coffee?
 After Ubuntu Desktop finishes installing, reboot the system by running `sudo shutdown now -r`. After the system reboots you should be greeted by Ubuntu's Unity Interface.
 
 ### Installing Essentials
-You'll notice ubuntu looks a little bare, without even any way to logout or open a terminal. This is all thanks to `--no-install-recommends`. We'll now install the bare essentials for our server. Install the following packages with the format `sudo apt-get install [packages]`, you can install as many space-seperated packages at one time as you would like.
+You'll notice ubuntu looks a little bare, without even any way to logout or open a terminal. This is all thanks to `--no-install-recommends`. We'll now install the bare essentials for our server. Since we have no terminal, we'll switch over to tty1 by pressing `Ctrl`-`Alt`-`F1`. Log in and install the following packages with the format `sudo apt-get install [packages]`, you can install as many space-seperated packages at one time as you would like.
 
 - System utilities (required): `software-center`, `indicator-applet-complete`, `gnome-terminal`, `gnome-disk-utility`, `gnome-network-manager`
 
@@ -73,3 +73,12 @@ You'll notice ubuntu looks a little bare, without even any way to logout or open
 - SAMBA (recommended for print driver network share): `samba`, `nautilus-share`
 
 - Apps (optional/preference): `firefox`, `transmission`
+
+After you've finished installing all the packages that you need, go ahead and reboot with `sudo shutdown now -r`.
+
+### Giving control to Network Manager
+The Network Manager applet should now show up in menu bar at the top of the screen, however, your network devices will show up as being unmanaged. To allow Network Manager to manage our devices, open the Terminal (which you can now do by searching "Terminal" in lens), and enter `sudo nano /etc/network/interfaces` which will open the configuration file for our network interfaces. Comment all interfaces out using `#`, and exit saving changes. Reboot again, and Network Manager should now have control of our network interfaces.
+
+### Assigning a static IP address
+...
+
