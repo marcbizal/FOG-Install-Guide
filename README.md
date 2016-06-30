@@ -111,7 +111,9 @@ The Network Manager applet should now show up in menu bar at the top of the scre
 
 <a name="static-ip"></a>
 ### Assigning a static IP address
-Click the Network Manager icon in the tray, then select "Edit Connections..." Select the interface you want to assign a static IP address to and click Edit, in my case it was very vaguely named "Wired connection 1". You can now optionally rename the interface. Open the IPv4 Settings, then Add an address and configure to your needs.
+Click the Network Manager icon in the tray, then select "Edit Connections..." Select the interface you want to assign a static IP address to and click Edit, in my case it was very vaguely named "Wired connection 1". You can now optionally rename the interface. Open the IPv4 Settings, then add an address and configure to your needs. After saving your changes, exit Network Manager. 
+
+**IMPORTANT:** From the Network Manager tray, disconnect and reconnect to you network interface to apply changes. If you do not do this, the FOG installer will configure the server using the old DHCP assigned IP address.
 
 <a name="install-fog"></a>
 ### Download and install FOG Server
@@ -130,3 +132,20 @@ cd /root/fogproject/bin
 ```
 
 **NOTE:** By default, FOG Server uses PHP 5.3. As of Ubuntu 16, PHP 5 has been removed from the official repos. As of 6/30/2016, the FOG installer needs to be told to use PHP 7 explicitly. Please use the following command when running the installer: `php_ver='7.0' php_verAdds='-7.0' ./installfog.sh`
+
+The FOG installer should now run without any problems. Except for "Would you like DHCP to handle DNS?" which should be N, accept all defaults to the prompts by pressing the `Enter` key.
+
+Later in the install, the installer will prompt you to install/update your database schema. Open the FOG management interface (http://localhost/fog/management) in your web browser, if you're like me you'll be greeted with a message something like this:
+```
+Your database connection appears to be invalid. FOG is unable to communicate with the database. There are many reasons why this could be the case. Please check your credentials in /var/www/html/fog/lib/fog/config.class.php. Also confirm that the database is indeed running. If credentials are correct, and the Database service is running, check to ensure your filesystem has enough space.
+```
+
+This is because MySQL's behavior when the root password is empty has changed so that a non-root user can't log in as the MySQL root user with an empty password. [See here](https://wiki.ubuntu.com/XenialXerus/ReleaseNotes#MySQL_5.7) to learn more about this. To fix this, open a new Terminal instance (leaving the installer running) and log in via the MySQL command line tool as root, finally, change the connection setting.
+```sh
+mysql -u root
+...
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+mysql> quit
+```
+
+If successful, you should now be able to refresh the management interface update the database schema. Return to the installer and hit `Enter`, after a moment the installer should complete. At this point you should be able to return to the management interface and log in with the default credentials: `fog` and `password`.
