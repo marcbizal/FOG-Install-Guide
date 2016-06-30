@@ -62,7 +62,7 @@ When prompted to configure automatic updates, select "No automatic updates."
 
 <a name="software-selection"></a>
 ### Software Selection
-Ubuntu Server has a variety of optional software installs. We'll try to keep it lightweight, for now, by only installing standard system utilities, We'll install Ubuntu Desktop after the installation. Continue.
+Ubuntu Server has a variety of optional software installs. We'll try to keep it lightweight, for now, by only installing standard system utilities. We'll install Ubuntu Desktop after the installation. Continue.
 
 <a name="bootloader"></a>
 ### Bootloader
