@@ -92,13 +92,15 @@ After Ubuntu Desktop finishes installing, reboot the system by running `sudo shu
 ### Installing Essentials
 You'll notice ubuntu looks a little bare, without even any way to logout or open a terminal. This is all thanks to `--no-install-recommends`. We'll now install the bare essentials for our server. Since we have no terminal, we'll switch over to tty1 by pressing `Ctrl`-`Alt`-`F1`. Log in and install the following packages with the format `sudo apt-get install [packages]`, you can install as many space-seperated packages at one time as you would like.
 
-- System utilities (required): `software-center`, `indicator-applet-complete`, `gnome-terminal`, `gnome-disk-utility`, `gnome-network-manager`
+- System utilities (required): `software-center`, `indicator-applet-complete`, `gnome-terminal`, `gnome-disk-utility`, `gnome-network-manager`, `git`
 
 - Lens components (required): `unity-lens-applications`, `unity-lens-files`
 
 - SAMBA (recommended for print driver network share): `samba`, `nautilus-share`
 
 - Apps (optional/preference): `firefox`, `transmission`
+
+- Resource Monitor (awesome): `indicator-multiload`
 
 After you've finished installing all the packages that you need, go ahead and reboot with `sudo shutdown now -r`.
 
@@ -108,5 +110,5 @@ The Network Manager applet should now show up in menu bar at the top of the scre
 
 <a name="static-ip"></a>
 ### Assigning a static IP address
-...
+Click the Network Manager icon in the tray, then select "Edit Connections..." Select the interface you want to assign a static IP address to and click Edit, in my case it was very vaguely named "Wired connection 1". You can now optionally rename the interface. Open the IPv4 Settings, then Add an address and configure to your needs.
 
