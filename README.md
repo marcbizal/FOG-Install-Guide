@@ -1,5 +1,5 @@
 # Installing FOG Server
-FOG will run on a variety of Linux disros, however Ubuntu is 
+FOG will run on a variety of Linux disros, however Ubuntu is probably the most beginner friendly disto to run. As such, this tutorial will provide a step-by-step guide to getting FOG Server up and running on Ubuntu Server 16.04. *Enjoy!*
 
 **Table of Contents:**
 - [Create a bootable USB with unetbootin](#bootable-usb)
@@ -15,16 +15,17 @@ FOG will run on a variety of Linux disros, however Ubuntu is
 	- [Installing Essentials](#essentials)
 	- [Giving control to Network Manager](#network-manager)
 	- [Assigning a static IP address](#static-ip)
+	- [Download and install FOG Server](#install-fog)
 
 
 <a name="bootable-usb"></a>
 ## Create a bootable USB with unetbootin
 
-Download unetbootin from https://unetbootin.github.io/.
-
-Download Ubuntu 16.04 Server from http://releases.ubuntu.com/16.04/ubuntu-16.04-server-amd64.iso.torrent. This is a torrent link, so be sure to have Transmission, qBitTorrent or similar installed.
+Download [Ubuntu 16.04 Server](http://releases.ubuntu.com/16.04/ubuntu-16.04-server-amd64.iso.torrent). This is a torrent link, so be sure to have Transmission, qBitTorrent or similar installed.
 
 Ensure that the target USB drive is FAT formatted prior to writing the image with unetbootin.
+
+Download [unetbootin](https://unetbootin.github.io/).
 
 Open unetbootin and select the "Diskimage" radio button, then select the ISO file we downloaded. Set "Type" to "USB Drive" and "Drive" to the whatever USB drive you have selected to use.
 
@@ -39,21 +40,21 @@ When you reach the "Partition Disks" screen select Manual then select the primar
 
 <a name="swap"></a>
 #### SWAP
- - Select FREE SPACE
- - Create a new partition
- - Set the size of this partition to twice that of size of the RAM installed on the system
- - Set type to Primary.
- - Set Location to Beginning
- - Set "Use as" to "swap area", then continue to "Done setting up the partition."
+- Select FREE SPACE
+- Create a new partition
+- Set the size of this partition to twice that of size of the RAM installed on the system
+- Set type to Primary.
+- Set Location to Beginning
+- Set "Use as" to "swap area", then continue to "Done setting up the partition."
 
 <a name="root"></a>
 #### Root 
- - Select FREE SPACE again
- - This time set the size to "max"
- - Set type to Primary.
- - Set "Use as:" to "Ext4 [...]"
- - Optionally set a disk label
- - Turn the bootable flag on, then continue to "Done setting up the partition."
+- Select FREE SPACE again
+- This time set the size to "max"
+- Set type to Primary.
+- Set "Use as:" to "Ext4 [...]"
+- Optionally set a disk label
+- Turn the bootable flag on, then continue to "Done setting up the partition."
 
 Finally "Finish partitioning and write changes to disk", and accept. Ubuntu will now continue to install the base system, so feel free to grab a cup of coffee and kick back.
 
@@ -112,3 +113,20 @@ The Network Manager applet should now show up in menu bar at the top of the scre
 ### Assigning a static IP address
 Click the Network Manager icon in the tray, then select "Edit Connections..." Select the interface you want to assign a static IP address to and click Edit, in my case it was very vaguely named "Wired connection 1". You can now optionally rename the interface. Open the IPv4 Settings, then Add an address and configure to your needs.
 
+<a name="install-fog"></a>
+### Download and install FOG Server
+Now it's time to install FOG Server. You can download FOG Server directly from https://fogproject.org/ for a stable release, however I suggest downloading the latest cutting-edge revision from github. The primary features of FOG are always stable, and there are more bug fixes and improvements than there are broken features. At the time of writing, the SHA of the revision used was `88d8bca2b47f1e2446c5a560b37c0fafa8c914dd`. Follow the following steps to download and begin the FOG installation:
+
+- Initial Checkout
+```sh
+sudo -i
+git clone https://github.com/FOGProject/fogproject.git /root/fogproject
+```
+
+- Then navigate to the folder you specified and run:
+```sh
+cd /root/fogproject/bin
+./installfog.sh
+```
+
+**NOTE:** By default, FOG Server uses PHP 5.3. As of Ubuntu 16, PHP 5 has been removed from the official repos. As of 6/30/2016, the FOG installer needs to be told to use PHP 7 explicitly. Please use the following command when running the installer: `php_ver='7.0' php_verAdds='-7.0' ./installfog.sh`
