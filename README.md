@@ -41,9 +41,35 @@ Finally "Finish partitioning and write changes to disk", and accept. Ubuntu will
 When prompted to configure automatic updates, select "No automatic updates."
 
 ### Software Selection
-Ubuntu Server has a variety of optional software installs. We'll try to keep it lightweight, for now, install standard system utilities, and OpenSSH Server, we'll install Ubuntu desktop after the installation. Continue.
+Ubuntu Server has a variety of optional software installs. We'll try to keep it lightweight, for now, only install standard system utilities, we'll install Ubuntu desktop after the installation. Continue.
 
 ### Bootloader
 Install GRUB on the MBR of your primary hard drive.
 
 Shortly after the installation will complete, and you can now remove the USB drive and boot the system.
+
+## Configuring Ubuntu
+
+### Logging in
+Logging in is simple enough, however while writing this guide I ran into an issue where Ubuntu gave me odd unhelpful, but also not critical messages about the disk upon start-up. I had to open tty2 by pressing Ctrl-Alt-F2, at this point I could log in properly with the credentials I created in the installation step.
+
+### Install Ubuntu Desktop
+The reason I chose not to install Ubuntu Desktop initially is because Ubuntu ships quite a few unneeded packages that bloat the installation. To avoid this, we can install it after the initial installation with some additional options.
+
+- First update apt-get by running `sudo apt-get update`
+- Then install Ubuntu desktop by running `sudo apt-get install ubuntu-desktop --no-install-recommends`
+
+This can take a while so maybe get some more coffee?
+
+After Ubuntu Desktop finishes installing, reboot the system by running `sudo shutdown now -r`. After the system reboots you should be greeted by Ubuntu's Unity Interface.
+
+### Installing Essentials
+You'll notice ubuntu looks a little bare, without even any way to logout or open a terminal. This is all thanks to `--no-install-recommends`. We'll now install the bare essentials for our server. Install the following packages with the format `sudo apt-get install [packages]`, you can install as many space-seperated packages at one time as you would like.
+
+- System utilities (required): `software-center`, `indicator-applet-complete`, `gnome-terminal`, `gnome-disk-utility`, `gnome-network-manager`
+
+- Lens components (required): `unity-lens-applications`, `unity-lens-files`
+
+- SAMBA (recommended for print driver network share): `samba`, `nautilus-share`
+
+- Apps (optional/preference): `firefox`, `transmission`
