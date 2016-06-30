@@ -62,13 +62,13 @@ When prompted to configure automatic updates, select "No automatic updates."
 
 <a name="software-selection"></a>
 ### Software Selection
-Ubuntu Server has a variety of optional software installs. We'll try to keep it lightweight, for now, only install standard system utilities, we'll install Ubuntu desktop after the installation. Continue.
+Ubuntu Server has a variety of optional software installs. We'll try to keep it lightweight, for now, by only installing standard system utilities, We'll install Ubuntu Desktop after the installation. Continue.
 
 <a name="bootloader"></a>
 ### Bootloader
 Install GRUB on the MBR of your primary hard drive.
 
-Shortly after the installation will complete, and you can now remove the USB drive and boot the system.
+Shortly after, the installation will complete and you can now remove the USB drive and boot the system.
 
 
 <a name="configuring-ubuntu"></a>
@@ -76,34 +76,34 @@ Shortly after the installation will complete, and you can now remove the USB dri
 
 <a name="log-in"></a>
 ### Logging in
-Logging in is simple enough, however while writing this guide I ran into an issue where Ubuntu gave me odd unhelpful, but also not critical messages about the disk upon start-up. I had to open tty2 by pressing `Ctrl`-`Alt`-`F2`, at this point I could log in properly with the credentials I created in the installation step.
+Logging in is simple enough, however while writing this guide I ran into an issue where Ubuntu gave me odd, unhelpful but also non-critical messages about the disk upon start-up. I had to open tty2 by pressing `Ctrl`+`Alt`+`F2`, at this point I could log in properly with the credentials I created in the installation step.
 
 <a name="ubuntu-desktop"></a>
 ### Install Ubuntu Desktop
-The reason I chose not to install Ubuntu Desktop initially is because Ubuntu ships quite a few unneeded packages that bloat the installation. To avoid this, we can install it after the initial installation with some additional options.
+The reason I chose not to install Ubuntu Desktop initially is because Ubuntu ships with quite a few unneeded packages that bloat the installation. To avoid this, we can install it after the initial installation with some additional options.
 
 - First update apt-get by running `sudo apt-get update`
-- Then install Ubuntu desktop by running `sudo apt-get install ubuntu-desktop --no-install-recommends`
+- Then install Ubuntu Desktop by running `sudo apt-get install ubuntu-desktop --no-install-recommends`
 
 This can take a while so maybe get some more coffee?
 
-After Ubuntu Desktop finishes installing, reboot the system by running `sudo shutdown now -r`. After the system reboots you should be greeted by Ubuntu's Unity Interface.
+After Ubuntu Desktop finishes installing, reboot the system by running `sudo reboot`. After the system reboots you should be greeted by Ubuntu's Unity Interface.
 
 <a name="essentials"></a>
 ### Installing Essentials
-You'll notice ubuntu looks a little bare, without even any way to logout or open a terminal. This is all thanks to `--no-install-recommends`. We'll now install the bare essentials for our server. Since we have no terminal, we'll switch over to tty1 by pressing `Ctrl`-`Alt`-`F1`. Log in and install the following packages with the format `sudo apt-get install [packages]`, you can install as many space-seperated packages at one time as you would like.
+You'll notice ubuntu looks a little bare, without even any way to logout or open a terminal. This is all thanks to `--no-install-recommends`. We'll now install the bare essentials for our server. Since we have no terminal, we'll switch over to tty1 by pressing `Ctrl`+`Alt`+`F1`. Log in and install the following packages with the format `sudo apt-get install [packages]`, you can install as many space-seperated packages at one time as you would like.
 
-- System utilities (required): `software-center`, `indicator-applet-complete`, `gnome-terminal`, `gnome-disk-utility`, `gnome-network-manager`, `git`
+- System utilities (required): `software-center indicator-applet-complete gnome-terminal gnome-disk-utility gnome-network-manager git`
 
-- Lens components (required): `unity-lens-applications`, `unity-lens-files`
+- Lens components (required): `unity-lens-applications unity-lens-files`
 
-- SAMBA (recommended for print driver network share): `samba`, `nautilus-share`
+- SAMBA (recommended for print driver network share): `samba nautilus-share`
 
-- Apps (optional/preference): `firefox`, `transmission`
+- Apps (optional/preference): `firefox transmission`
 
 - Resource Monitor (awesome): `indicator-multiload`
 
-After you've finished installing all the packages that you need, go ahead and reboot with `sudo shutdown now -r`.
+After you've finished installing all the packages that you need, go ahead and reboot with `sudo reboot`.
 
 <a name="network-manager"></a>
 ### Giving control to Network Manager
