@@ -16,7 +16,7 @@ FOG will run on a variety of Linux disros, however Ubuntu is probably the most b
 	- [Giving control to Network Manager](#network-manager)
 	- [Assigning a static IP address](#static-ip)
 	- [Download and install FOG Server](#install-fog)
-
+	- [Configuring DHCP](#dhcp)
 
 <a name="bootable-usb"></a>
 ## Create a bootable USB with unetbootin
@@ -149,3 +149,118 @@ mysql> quit
 ```
 
 If successful, you should now be able to refresh the management interface update the database schema. Return to the installer and hit `Enter`, after a moment the installer should complete. At this point you should be able to return to the management interface and log in with the default credentials: `fog` and `password`.
+
+<a name="dhcp"></a>
+### Configuring DHCP
+When a client boots to the network, it makes a request to the DHCP server for the necissary information to PXE boot. There are two options for configuring DHCP. Easiest is just to configure the two PXE related options directly on your DHCP server. In my case, the DHCP server was running on a firewall, and didn't allow this level of configuration. In this case my best option was to use proxyDHCP. ProxyDHCP listens and responds to DHCP requests from clients identifying themselves as PXE clients, while leaving the role of assigning IP addresses to the other DHCP servers. I will describe both processes below.
+
+#### Direct Configuration
+In most cases, DHCP can be configured for PXE boot by setting two options on your DHCP server.
+
+##### 066 - Boot Server Host Name
+This is the IP address or host name of the PXE server, or FOG server, on our network. This will be whatever static IP address you assigned above.
+
+##### 067 - Bootfile Name
+This is the name of the PXE image that will be booted from the server. In all modern versions of FOG server since 0.32, this file will be called `undionly.kpxe`.
+
+#### ProxyDHCP
+In the case that the DHCP server is unmodifiable for any reason, or you would just like not to modify the DHCP server, proxyDHCP can be used.
+
+1. Install dnsmasq using:
+```sh
+sudo apt-get install dnsmasq
+```
+
+2. Create or modify `/etc/dnsmasq/ltsp.conf` and configure as needed:
+```
+# Don't function as a DNS server:
+# port=0
+
+# Log lots of extra information about DHCP transactions.
+log-dhcp
+
+# Dnsmasq can also function as a TFTP server. You may uninstall
+# tftpd-hpa if you like, and uncomment the next line:
+# enable-tftp
+
+# Set the root directory for files available via FTP.
+tftp-root=/tftpboot
+
+# The boot filename, Server name, PXE Server IP Address
+dhcp-boot=undionly.kpxe,,x.x.x.x
+
+# !!! Insert the PXE server IP address above !!!
+
+# rootpath option, for NFS
+#dhcp-option=17,/images
+
+# kill multicast
+#dhcp-option=vendor:PXEClient,6,2b
+
+# Disable re-use of the DHCP servername and filename fields as extra
+# option space. That's to avoid confusing some old or broken DHCP clients.
+dhcp-no-override
+
+# PXE menu.  The first part is the text displayed to the user.  The second is the timeout, in seconds.
+pxe-prompt="Press F8 for boot menu", 3
+
+# The known types are x86PC, PC98, IA64_EFI, Alpha, Arc_x86,
+# Intel_Lean_Client, IA32_EFI, BC_EFI, Xscale_EFI and X86-64_EFI
+# This option is first and will be the default if there is no input from the user.
+pxe-service=X86PC, "Boot from network", undionly
+
+# A boot service type of 0 is special, and will abort the
+# net boot procedure and continue booting from local media.
+#pxe-service=X86PC, "Boot from local hard disk", 0
+
+# If an integer boot service type, rather than a basename is given, then the
+# PXE client will search for a suitable boot service for that type on the
+# network. This search may be done by multicast or broadcast, or direct to a
+# server if its IP address is provided.
+# pxe-service=x86PC, "Install windows from RIS server", 1
+
+# This range(s) is for the public interface, where dnsmasq functions
+# as a proxy DHCP server providing boot information but no IP leases.
+# Any ip in the subnet will do, so you may just put your server NIC ip here.
+# Since dnsmasq is not providing true DHCP services, you do not want it
+# handing out IP addresses.  Just put your servers IP address for the interface
+# that is connected to the network on which the FOG clients exist.
+# If this setting is incorrect, the dnsmasq may not start, rendering
+# your proxyDHCP ineffective.
+dhcp-range=192.168.200.1,proxy,255.255.0.0
+
+# !!! Insert the DHCP server IP address, and subnet mask above !!!
+
+# This range(s) is for the private network on 2-NIC servers,
+# where dnsmasq functions as a normal DHCP server, providing IP leases.
+# dhcp-range=192.168.0.20,192.168.0.250,8h
+
+# For static client IPs, and only for the private subnets,
+# you may put entries like this:
+# dhcp-host=00:20:e0:3b:13:af,10.160.31.111,client111,infinite
+
+```
+
+3. Restart dnsmasq with
+```sh
+sudo service dnsmasq restart
+```
+
+**NOTE:** After this, when I attempted to boot from the network the machine immediately found the DHCP proxy and received the necissary information to PXE boot, however after initializing and establishing a link, I was greeted with this error:
+```
+TFTP.
+PXE-M0F: Exiting Intel Boot Agent. 
+```
+Initially, I suspected an issue with my dnsmasq configuration, however after inspecting TFTP packets being transmitted over the network to and from this machine using [Wireshark](https://www.wireshark.org/), I found a TFTP packet from the FOG server with `Error code: File not found (1)` for `undionly.0`. For whatever reason, TFTP is still looking for `undionly.0` instead of `undionly.kpxe`. To fix this, I ran the following commands:
+```sh
+cd /tftpboot
+sudo ln -s undionly.kpxe undionly.0
+```
+
+**NOTE:** After you have confirmed everything is working, you can change the timeout to 0 on the line:
+```
+pxe-prompt="Press F8 for boot menu", 3
+```
+
+### That's all she wrote!
+At this point you should have a working FOG server. You may still have to tinker with some of FOG's settings, particularly the *FOG Configuration>iPXE Boot Menu settings>Exit to Hard Drive Type* setting, these will depend on several factors including BIOS of your target machine. Otherwise, enjoy your now copious spare time!
